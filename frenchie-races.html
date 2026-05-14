@@ -578,13 +578,23 @@ const DOG_COLORS = [
   { name: 'Klara',    body: '#CD853F', snout: '#A0622a', ear: '#8B5A2B', tongue: '#ff6b8a' },
 ];
 
-const GERMAN_FEMALE_NAMES = [
-  'Anna','Emma','Lena','Marie','Sophie','Laura','Julia','Lea','Hannah','Mia',
-  'Lisa','Jana','Monika','Sabine','Petra','Heike','Susanne','Angelika','Birgit',
-  'Helga','Renate','Brigitte','Ute','Margot','Hildegard','Waltraud','Elfriede',
-  'Brunhilde','Hannelore','Ingeborg','Gisela','Christa','Ursula','Dorothea',
-  'Lieselotte','Frieda','Herta','Ilse','Erika','Bärbel','Ingrid','Jutta','Karin',
-  'Gerda','Edeltraud','Sieglinde','Hildegunde','Rosemarie','Anneliese','Marianne'
+const FEMALE_NAMES = [
+  // Deutsch
+  'Brunhilde','Waltraud','Hildegard','Elfriede','Hannelore','Bärbel','Edeltraud','Irmgard','Lieselotte','Sieglinde',
+  // Englisch / Amerikanisch
+  'Brittany','Tiffany','Destiny','Madison','Savannah','Kylie','Shaquanda','Brandi','Tammy','Debra',
+  // Französisch
+  'Camille','Margot','Juliette','Amélie','Geneviève','Brigitte','Colette','Monique','Françoise','Baguette',
+  // Spanisch / Latein
+  'Conchita','Lupe','Dolores','Encarnación','Pilar','Remedios','Rosario','Soledad','Milagros','Purificación',
+  // Skandinavisch
+  'Astrid','Freya','Sigrid','Ingrid','Saga','Ragnhild','Thordis','Gudrun','Brynja','Vigdís',
+  // Russisch / Osteuropäisch
+  'Natasha','Svetlana','Tatiana','Olga','Ludmila','Valentina','Oksana','Galina','Zdenka','Dragomir',
+  // Japanisch
+  'Yuki','Sakura','Himari','Midori','Fumiko','Kazuko','Haruka','Michiko','Tomoko','Yoshiko',
+  // International
+  'Fatou','Aminata','Imani','Layla','Yasmin','Priyanka','Ananya','Saoirse','Siobhán','Xiomara',
 ];
 
 const ODDS_MAP  = [0, 2.5, 2.0, 1.5];
@@ -617,7 +627,14 @@ const state = {
 // ═══════════════════════════════════════════════
 
 function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
-function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 function transition(phase) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -718,7 +735,7 @@ function initBetting() {
 
   state.players.forEach(p => { p.rebuySips = 0; });
 
-  const namesThisRound = shuffle(GERMAN_FEMALE_NAMES).slice(0, state.numDogs);
+  const namesThisRound = shuffle(FEMALE_NAMES).slice(0, state.numDogs);
   state.dogs.forEach((dog, i) => { dog.name = namesThisRound[i]; });
   assignStrengthsForRound();
 
