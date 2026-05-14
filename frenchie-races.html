@@ -1192,7 +1192,7 @@ function drawTrack(camX, w, h) {
     ctx.setLineDash([]);
 
     // dog name label (fixed to left edge)
-    ctx.fillStyle = state.dogs[i].body + 'bb';
+    ctx.fillStyle = '#ffffff';
     ctx.font = 'bold 11px system-ui'; ctx.textAlign = 'left';
     ctx.fillText(state.dogs[i].name, 6, laneY + 14);
   }
@@ -1370,7 +1370,7 @@ function initRacing() {
     const player = state.players[bet.playerIndex];
     const pill = document.createElement('div');
     pill.className = 'bet-pill';
-    pill.innerHTML = `<span class="swatch" style="background:${dog.body}"></span><strong>${player.name}</strong>&nbsp;→ ${dog.name}${state.useOdds ? ` <span style="color:var(--gold)">${dog.odds}x</span>` : ''} (${bet.wager} Chips)`;
+    pill.innerHTML = `<span class="swatch" style="background:${dog.coat}"></span><strong>${player.name}</strong>&nbsp;→ ${dog.name}${state.useOdds ? ` <span style="color:var(--gold)">${dog.odds}x</span>` : ''} (${bet.wager} Chips)`;
     ticker.appendChild(pill);
   });
 
