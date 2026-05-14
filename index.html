@@ -619,6 +619,9 @@ const FEMALE_NAMES = [
 const ODDS_MAP  = [0, 2.5, 2.0, 1.5];
 const LABEL_MAP = ['', 'Außenseiter ⭐', 'Mittel ⭐⭐', 'Favorit ⭐⭐⭐'];
 
+const RACE_MIN_SPEEDS = [0, 0.85, 0.87, 0.89];
+const RACE_MAX_SPEEDS = [0, 0.93, 0.95, 0.97];
+
 // ═══════════════════════════════════════════════
 //  STATE
 // ═══════════════════════════════════════════════
@@ -1184,18 +1187,20 @@ function drawTrack(camX, w, h) {
 // ═══════════════════════════════════════════════
 
 function initRaceDogs() {
-  const minSpeeds = [0, 0.81, 0.85, 0.89];
-  const maxSpeeds = [0, 0.91, 0.95, 0.99];
   return state.dogs.map((dog, i) => {
     const s = dog.strength || 3;
+    const base = RACE_MIN_SPEEDS[s] + Math.random() * (RACE_MAX_SPEEDS[s] - RACE_MIN_SPEEDS[s]);
     return {
       id: i, name: dog.name,
       x: START_X,
       speed: 0,
-      baseSpeed: minSpeeds[s] + Math.random() * (maxSpeeds[s] - minSpeeds[s]),
+      strength: s,
+      baseSpeed: base,
+      targetSpeed: base,
+      driftTimer: Math.floor(Math.random() * 80),
       stamina: 0.7 + Math.random() * 0.3,
       burstFrames: 0,
-      burstCooldown: Math.floor(Math.random() * 80),
+      burstCooldown: 80 + Math.floor(Math.random() * 80),
       wobblePhase: Math.random() * Math.PI * 2,
       finished: false,
       finishTime: null,
@@ -1215,12 +1220,26 @@ function updateRaceDogs() {
 
     dog.stamina = Math.max(0.5, dog.stamina - 0.0003);
 
+    // Drifting base speed — target rerolls every 80–220 frames
+    const s = dog.strength;
+    if (dog.driftTimer <= 0) {
+      dog.targetSpeed = RACE_MIN_SPEEDS[s] + Math.random() * (RACE_MAX_SPEEDS[s] - RACE_MIN_SPEEDS[s]);
+      dog.driftTimer  = 80 + Math.floor(Math.random() * 140);
+    } else {
+      dog.driftTimer--;
+    }
+    dog.baseSpeed += (dog.targetSpeed - dog.baseSpeed) * 0.015;
+
+    const nearFinish  = dog.x > FINISH_VX - 400;
+    const burstChance = nearFinish ? 0.10 : 0.05;
+    const burstLen    = nearFinish ? 35 + Math.floor(Math.random() * 50) : 25 + Math.floor(Math.random() * 45);
+
     if (dog.burstFrames > 0) {
       dog.burstFrames--;
     } else if (dog.burstCooldown > 0) {
       dog.burstCooldown--;
-    } else if (Math.random() < 0.05) {
-      dog.burstFrames = 25 + Math.floor(Math.random() * 45);
+    } else if (Math.random() < burstChance) {
+      dog.burstFrames   = burstLen;
       dog.burstCooldown = 50 + Math.floor(Math.random() * 100);
     }
 
@@ -1228,7 +1247,7 @@ function updateRaceDogs() {
     const stamFactor = 0.75 + dog.stamina * 0.25;
     const noise = (Math.random() - 0.5) * 0.55;
     const gap = leadX - dog.x;
-    const catchUp = gap > 300 ? 1.22 : gap > 150 ? 1.10 : 1.0;
+    const catchUp = gap > 220 ? 1.40 : gap > 110 ? 1.20 : 1.0;
 
     dog.speed = dog.baseSpeed * burst * stamFactor * catchUp + noise;
     dog.speed = Math.max(0.4, dog.speed);
