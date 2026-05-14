@@ -283,6 +283,8 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 .lb-sips.loser  { color: var(--accent); }
 .lb-sips.winner { color: var(--green); }
 .lb-sips.even   { color: var(--muted); }
+.rebuy-header { font-size: 1.2rem; font-weight: 900; color: var(--accent); margin-bottom: 8px; }
+.rebuy-hint   { font-size: 0.9rem; color: var(--muted); margin-bottom: 16px; }
 </style>
 </head>
 <body>
@@ -409,6 +411,18 @@ const DOG_COLORS = [
   { name: 'Klara',    body: '#CD853F', snout: '#A0622a', ear: '#8B5A2B', tongue: '#ff6b8a' },
 ];
 
+const GERMAN_FEMALE_NAMES = [
+  'Anna','Emma','Lena','Marie','Sophie','Laura','Julia','Lea','Hannah','Mia',
+  'Lisa','Jana','Monika','Sabine','Petra','Heike','Susanne','Angelika','Birgit',
+  'Helga','Renate','Brigitte','Ute','Margot','Hildegard','Waltraud','Elfriede',
+  'Brunhilde','Hannelore','Ingeborg','Gisela','Christa','Ursula','Dorothea',
+  'Lieselotte','Frieda','Herta','Ilse','Erika','Bärbel','Ingrid','Jutta','Karin',
+  'Gerda','Edeltraud','Sieglinde','Hildegunde','Rosemarie','Anneliese','Marianne'
+];
+
+const ODDS_MAP  = [0, 4.0, 3.0, 2.5];
+const LABEL_MAP = ['', 'Außenseiter ⭐', 'Mittel ⭐⭐', 'Favorit ⭐⭐⭐'];
+
 // ═══════════════════════════════════════════════
 //  STATE
 // ═══════════════════════════════════════════════
@@ -500,19 +514,7 @@ function startGame() {
 
   state.players = names.map(n => ({ name: n, chips: state.startingChips }));
 
-  const ODDS_MAP   = [0, 6.0, 4.0, 3.0, 2.0, 1.5];
-  const LABEL_MAP  = ['', 'Joker ⭐', 'Außenseiter ⭐⭐', 'Mittel ⭐⭐⭐', 'Stark ⭐⭐⭐⭐', 'Favorit ⭐⭐⭐⭐⭐'];
-  const allStrengths = [5, 4, 3, 2, 1];
-  // For >5 dogs, repeat the middle tiers
-  while (allStrengths.length < state.numDogs) allStrengths.push(3 - (allStrengths.length % 2));
-  const strengths = shuffle(allStrengths).slice(0, state.numDogs);
-
-  state.dogs = DOG_COLORS.slice(0, state.numDogs).map((d, i) => ({
-    ...d,
-    strength: strengths[i],
-    odds:     ODDS_MAP[strengths[i]],
-    oddsLabel: LABEL_MAP[strengths[i]],
-  }));
+  state.dogs = DOG_COLORS.slice(0, state.numDogs).map(d => ({ ...d }));
   state.currentRound = 0;
 
   transition(PHASES.BETTING);
@@ -529,12 +531,30 @@ state.players = ['Tim','Philipp','Jo','Timmy','Fabian','Luca','Niki']
 let bettingPlayerIndex = 0;
 let selectedDogId = null;
 let currentWager = 5;
+let isRebuyMode = false;
+
+function assignStrengthsForRound() {
+  state.dogs.forEach(dog => {
+    const s = Math.ceil(Math.random() * 3);
+    dog.strength  = s;
+    dog.odds      = ODDS_MAP[s];
+    dog.oddsLabel = LABEL_MAP[s];
+  });
+}
 
 function initBetting() {
   state.bets = [];
   bettingPlayerIndex = 0;
   selectedDogId = null;
+  isRebuyMode = false;
   state.currentRound++;
+
+  state.players.forEach(p => { p.rebuySips = 0; });
+
+  const namesThisRound = shuffle(GERMAN_FEMALE_NAMES).slice(0, state.numDogs);
+  state.dogs.forEach((dog, i) => { dog.name = namesThisRound[i]; });
+  assignStrengthsForRound();
+
   showCurtain(bettingPlayerIndex);
 }
 
@@ -549,7 +569,51 @@ function hideCurtain() {
   renderBettingUI(bettingPlayerIndex);
 }
 
+function showRebuyUI(playerIdx) {
+  isRebuyMode = true;
+  const player = state.players[playerIdx];
+  document.getElementById('betting-player-name').textContent = player.name;
+  document.getElementById('betting-round-label').textContent = `Runde ${state.currentRound} / ${state.totalRounds}`;
+  document.getElementById('betting-chips').textContent = '0';
+
+  const sel = document.getElementById('dog-selector');
+  sel.innerHTML = `
+    <div style="padding:8px 0 4px;">
+      <div class="rebuy-header">${player.name} ist Bankrott! 💸</div>
+      <p class="rebuy-hint">Wie viele Chips kaufst du? Du trinkst diese Anzahl Schlucke sofort.</p>
+    </div>`;
+
+  currentWager = 5;
+  document.getElementById('wager-display').textContent = currentWager;
+  document.querySelector('.wager-section .section-label').textContent = 'Chip-Einkauf';
+
+  const btn = document.getElementById('confirm-bet-btn');
+  btn.textContent = 'EINKAUFEN & TRINKEN 🍺';
+
+  const dots = document.getElementById('progress-dots');
+  dots.innerHTML = '';
+  state.players.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'progress-dot' + (i < playerIdx ? ' done' : i === playerIdx ? ' active' : '');
+    dots.appendChild(d);
+  });
+}
+
+function confirmRebuy() {
+  const player = state.players[bettingPlayerIndex];
+  player.chips = currentWager;
+  player.rebuySips = currentWager;
+  isRebuyMode = false;
+  document.getElementById('confirm-bet-btn').textContent = 'WETTE ABGEBEN';
+  document.querySelector('.wager-section .section-label').textContent = 'Einsatz';
+  renderBettingUI(bettingPlayerIndex);
+}
+
 function renderBettingUI(playerIdx) {
+  if (state.players[playerIdx].chips === 0) {
+    showRebuyUI(playerIdx);
+    return;
+  }
   const player = state.players[playerIdx];
   document.getElementById('betting-player-name').textContent = player.name;
   document.getElementById('betting-round-label').textContent = `Runde ${state.currentRound} / ${state.totalRounds}`;
@@ -594,12 +658,13 @@ function selectDog(dogName, btn) {
 }
 
 function adjustWager(delta) {
-  const max = state.players[bettingPlayerIndex].chips;
+  const max = isRebuyMode ? 999 : state.players[bettingPlayerIndex].chips;
   currentWager = clamp(currentWager + delta, 1, max);
   document.getElementById('wager-display').textContent = currentWager;
 }
 
 function confirmBet() {
+  if (isRebuyMode) { confirmRebuy(); return; }
   if (!selectedDogId) { alert('Wähle erst eine Bulldogge!'); return; }
   state.bets.push({ playerIndex: bettingPlayerIndex, dogName: selectedDogId, wager: currentWager });
   bettingPlayerIndex++;
@@ -901,8 +966,8 @@ function drawTrack(camX, w, h) {
 // ═══════════════════════════════════════════════
 
 function initRaceDogs() {
-  const minSpeeds = [0, 0.72, 0.76, 0.80, 0.84, 0.88];
-  const maxSpeeds = [0, 0.84, 0.88, 0.92, 0.96, 1.00];
+  const minSpeeds = [0, 0.81, 0.85, 0.89];
+  const maxSpeeds = [0, 0.91, 0.95, 0.99];
   return state.dogs.map((dog, i) => {
     const s = dog.strength || 3;
     return {
@@ -1080,6 +1145,7 @@ function calculateResults() {
   const results = state.players.map((p, i) => ({
     playerIndex: i, name: p.name,
     chipsChange: 0, sips: 0, won: false, dogName: '', wager: 0,
+    rebuySips: p.rebuySips || 0,
   }));
 
   state.bets.forEach(bet => {
@@ -1103,12 +1169,6 @@ function calculateResults() {
     const player = state.players[r.playerIndex];
     player.chips = Math.max(0, player.chips + r.chipsChange);
 
-    // Bankrupt bailout
-    if (player.chips === 0) {
-      player.chips = 3;
-      r.sips += 3;
-      r.bankrupt = true;
-    }
   });
 
   return results;
@@ -1153,7 +1213,7 @@ function initResults() {
       <div class="result-left">
         <div class="result-player">${r.name}</div>
         <div class="result-bet-info">Auf: ${r.dogName || '—'} (${r.odds ? r.odds + 'x' : '—'}) · ${r.wager} Chips gesetzt</div>
-        ${r.bankrupt ? '<div style="font-size:0.8rem;color:var(--accent);">💸 Bankrott-Bailout (+3 Chips, +3 Schlucke)</div>' : ''}
+        ${r.rebuySips ? `<div style="font-size:0.8rem;color:var(--accent);">💸 Re-Buy: ${r.rebuySips} Schlucke getrunken, ${r.rebuySips} Chips erkauft</div>` : ''}
       </div>
       <div class="result-right">
         <div class="chips-delta ${deltaClass}">${deltaStr} Chips</div>
