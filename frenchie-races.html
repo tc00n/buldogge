@@ -286,7 +286,7 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 .rebuy-header { font-size: 1.2rem; font-weight: 900; color: var(--neg); margin-bottom: 8px; }
 .rebuy-hint   { font-size: 0.9rem; color: var(--muted); margin-bottom: 16px; }
 
-/* ─── LANDSCAPE MOBILE ─── */
+/* ─── LANDSCAPE TABLET (≤600px tall) ─── */
 @media (orientation: landscape) and (max-height: 600px) {
   .screen { padding: 6px; overflow-y: auto; }
   .card { padding: 12px; }
@@ -308,11 +308,11 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
     max-width: 780px;
     align-items: start;
   }
-  #screen-setup .card > .title-wrap    { grid-column: 1 / -1; }
+  #screen-setup .card > .title-wrap     { grid-column: 1 / -1; }
   #screen-setup .card > .players-header { grid-column: 1; }
-  #screen-setup .card > #player-list   { grid-column: 1; max-height: 200px; overflow-y: auto; margin-bottom: 0; }
-  #screen-setup .card > .config-row    { grid-column: 2; margin-top: 0 !important; }
-  #screen-setup .card > .field-group   { grid-column: 2; }
+  #screen-setup .card > #player-list    { grid-column: 1; max-height: 200px; overflow-y: auto; margin-bottom: 0; }
+  #screen-setup .card > .config-row     { grid-column: 2; margin-top: 0 !important; }
+  #screen-setup .card > .field-group    { grid-column: 2; }
   #screen-setup .card > #start-game-btn { grid-column: 2; }
 
   /* Betting: wider, dogs in 2 columns */
@@ -329,7 +329,7 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 
   /* Race */
   .race-header { padding: 0 4px 4px; }
-  .bet-ticker { padding: 4px 4px 0; }
+  .bet-ticker { padding: 4px 4px 0; flex-wrap: nowrap; overflow-x: auto; }
 
   /* Results */
   #screen-results .card { max-width: 780px; }
@@ -345,6 +345,76 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
   .leaderboard-list { gap: 5px; margin-bottom: 12px; }
   .lb-row { padding: 8px 14px; }
   .shame-box { padding: 10px; margin-bottom: 10px; }
+}
+
+/* ─── LANDSCAPE PHONE (≤430px tall — iPhone 15 Pro) ─── */
+@media (orientation: landscape) and (max-height: 430px) {
+  .screen { padding: 3px; }
+  .card { padding: 8px 11px; }
+  h1 { font-size: 1.2rem; }
+  h2 { font-size: 0.95rem; margin-bottom: 4px; }
+  button { padding: 7px 11px; min-height: 34px; }
+  .btn-primary { margin-top: 5px; font-size: 0.88rem; }
+  .btn-secondary { margin-top: 4px; font-size: 0.85rem; }
+  input[type="text"], input[type="number"], select { padding: 6px 9px; font-size: 0.83rem; }
+  .field-group { margin-bottom: 7px; }
+  .gwg-logo { display: none; }
+  .title-wrap { margin-bottom: 2px; }
+  .subtitle { display: none; }
+
+  /* Setup */
+  #screen-setup .card { max-width: none; }
+  #screen-setup .card > #player-list { max-height: 148px; }
+
+  /* Betting */
+  #screen-betting .card { max-width: none; }
+  .dog-btn { padding: 5px 6px; }
+  .dog-btn-name { font-size: 0.8rem; }
+  .dog-btn-odds { font-size: 0.66rem; }
+  .dog-swatch { width: 13px !important; height: 13px !important; }
+  .wager-display { font-size: 1.15rem; }
+  .wager-controls button { padding: 5px 8px; min-height: 32px; }
+  .betting-header { margin-bottom: 4px; }
+  #dog-selector { gap: 4px; margin-bottom: 5px; }
+  .wager-section { margin-bottom: 4px; }
+  .chip-badge { padding: 3px 8px; font-size: 0.76rem; }
+  .round-badge { padding: 3px 8px; font-size: 0.72rem; }
+  .progress-dots { margin-top: 4px; }
+  .section-label { margin-bottom: 4px; font-size: 0.7rem; }
+  .curtain { gap: 6px; padding: 14px; }
+  .curtain-emoji { font-size: 1.5rem; }
+  .curtain h2 { font-size: 0.95rem; }
+  .curtain p { font-size: 0.8rem; }
+
+  /* Race */
+  .race-header { padding: 0 3px 2px; }
+  .race-title { font-size: 0.9rem; }
+  .bet-ticker { padding: 2px 3px 0; gap: 4px; }
+  .bet-pill { padding: 2px 7px; font-size: 0.69rem; }
+
+  /* Results */
+  #screen-results .card { max-width: none; }
+  .podium { margin-bottom: 6px; }
+  .podium-block { width: 58px; }
+  .podium-block.p1 { height: 38px; }
+  .podium-block.p2 { height: 27px; }
+  .podium-block.p3 { height: 19px; }
+  .results-table { gap: 4px; margin-bottom: 7px; }
+  .result-row { padding: 5px 9px; }
+  .result-player { font-size: 0.86rem; }
+  .result-bet-info { font-size: 0.7rem; }
+  .chips-delta { font-size: 0.86rem; }
+
+  /* Leaderboard */
+  #screen-leaderboard .card { max-width: none; }
+  .leaderboard-list { gap: 4px; margin-bottom: 8px; }
+  .lb-row { padding: 5px 10px; }
+  .lb-rank { font-size: 0.95rem; width: 22px; }
+  .lb-name { font-size: 0.9rem; }
+  .lb-chips { font-size: 0.9rem; }
+  .shame-box { padding: 7px; margin-bottom: 7px; }
+  .shame-box h3 { font-size: 0.95rem; }
+  .shame-box p { font-size: 0.78rem; }
 }
 </style>
 </head>
@@ -403,7 +473,7 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
     <div class="config-row" style="margin-top:16px;">
       <div class="field-group">
         <label>Startchips</label>
-        <input type="number" id="starting-chips" value="20" min="5" max="100">
+        <input type="number" id="starting-chips" value="10" min="1" max="100">
       </div>
       <div class="field-group">
         <label>Runden</label>
@@ -517,7 +587,7 @@ const GERMAN_FEMALE_NAMES = [
   'Gerda','Edeltraud','Sieglinde','Hildegunde','Rosemarie','Anneliese','Marianne'
 ];
 
-const ODDS_MAP  = [0, 4.0, 3.0, 2.5];
+const ODDS_MAP  = [0, 1.5, 2.0, 2.5];
 const LABEL_MAP = ['', 'Außenseiter ⭐', 'Mittel ⭐⭐', 'Favorit ⭐⭐⭐'];
 
 // ═══════════════════════════════════════════════
@@ -605,7 +675,7 @@ function startGame() {
   if (names.some(n => !n)) { alert('Bitte alle Spielernamen ausfüllen!'); return; }
   if (new Set(names).size !== names.length) { alert('Spielernamen müssen eindeutig sein!'); return; }
 
-  state.startingChips = parseInt(document.getElementById('starting-chips').value) || 20;
+  state.startingChips = parseInt(document.getElementById('starting-chips').value) || 10;
   state.totalRounds   = parseInt(document.getElementById('num-rounds').value) || 6;
   state.numDogs       = parseInt(document.getElementById('num-dogs').value) || 5;
 
@@ -781,16 +851,21 @@ const canvas = document.getElementById('race-canvas');
 const ctx = canvas.getContext('2d');
 let dpr = 1;
 let LANE_H = 90;
-const HEADER_H = 40;
+let HEADER_H = 40;
 const TRACK_LENGTH = 2200;
 const START_X      = 100;
 const FINISH_VX    = 2100;
 
 function setupCanvas() {
   dpr = window.devicePixelRatio || 1;
-  LANE_H = (window.innerHeight < 600 && window.innerWidth > window.innerHeight) ? 54 : 90;
-  const cssW = Math.min(820, window.innerWidth - 16);
-  const cssH = HEADER_H + state.numDogs * LANE_H + 20;
+  const isLandscape = window.innerWidth > window.innerHeight;
+  const isPhone  = isLandscape && window.innerHeight <= 430;
+  const isTablet = isLandscape && window.innerHeight <= 600;
+  LANE_H   = isPhone ? 40 : isTablet ? 52 : 90;
+  HEADER_H = isPhone ? 24 : 40;
+  const pad = isPhone ? 4 : 16;
+  const cssW = Math.min(820, window.innerWidth - pad);
+  const cssH = HEADER_H + state.numDogs * LANE_H + (isPhone ? 6 : 20);
   canvas.style.width  = cssW + 'px';
   canvas.style.height = cssH + 'px';
   canvas.width  = cssW * dpr;
