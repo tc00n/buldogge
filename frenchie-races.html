@@ -737,6 +737,7 @@ state.players = ['Tim','Philipp','Jo','Timmy','Fabian','Luca','Niki']
 // ═══════════════════════════════════════════════
 
 let bettingPlayerIndex = 0;
+let bettingOrder = [];
 let selectedDogId = null;
 let currentWager = 5;
 let isRebuyMode = false;
@@ -759,6 +760,7 @@ function assignStrengthsForRound() {
 function initBetting() {
   state.bets = [];
   bettingPlayerIndex = 0;
+  bettingOrder = shuffle(state.players.map((_, i) => i));
   selectedDogId = null;
   isRebuyMode = false;
   state.currentRound++;
@@ -770,7 +772,7 @@ function initBetting() {
   state.dogs.forEach((dog, i) => { dog.name = namesThisRound[i]; });
   assignStrengthsForRound();
 
-  showCurtain(bettingPlayerIndex);
+  showCurtain(bettingOrder[bettingPlayerIndex]);
 }
 
 function showCurtain(playerIdx) {
@@ -781,7 +783,7 @@ function showCurtain(playerIdx) {
 
 function hideCurtain() {
   document.getElementById('curtain').classList.add('hidden');
-  renderBettingUI(bettingPlayerIndex);
+  renderBettingUI(bettingOrder[bettingPlayerIndex]);
 }
 
 function showRebuyUI(playerIdx) {
@@ -809,19 +811,19 @@ function showRebuyUI(playerIdx) {
   dots.innerHTML = '';
   state.players.forEach((_, i) => {
     const d = document.createElement('div');
-    d.className = 'progress-dot' + (i < playerIdx ? ' done' : i === playerIdx ? ' active' : '');
+    d.className = 'progress-dot' + (i < bettingPlayerIndex ? ' done' : i === bettingPlayerIndex ? ' active' : '');
     dots.appendChild(d);
   });
 }
 
 function confirmRebuy() {
-  const player = state.players[bettingPlayerIndex];
+  const player = state.players[bettingOrder[bettingPlayerIndex]];
   player.chips = currentWager;
   player.rebuySips = currentWager;
   isRebuyMode = false;
   document.getElementById('confirm-bet-btn').textContent = 'WETTE ABGEBEN';
   document.querySelector('.wager-section .section-label').textContent = 'Einsatz';
-  renderBettingUI(bettingPlayerIndex);
+  renderBettingUI(bettingOrder[bettingPlayerIndex]);
 }
 
 function renderBettingUI(playerIdx) {
@@ -861,7 +863,7 @@ function renderBettingUI(playerIdx) {
   dots.innerHTML = '';
   state.players.forEach((_, i) => {
     const d = document.createElement('div');
-    d.className = 'progress-dot' + (i < playerIdx ? ' done' : i === playerIdx ? ' active' : '');
+    d.className = 'progress-dot' + (i < bettingPlayerIndex ? ' done' : i === bettingPlayerIndex ? ' active' : '');
     dots.appendChild(d);
   });
 }
@@ -873,7 +875,7 @@ function selectDog(dogName, btn) {
 }
 
 function adjustWager(delta) {
-  const max = isRebuyMode ? 999 : state.players[bettingPlayerIndex].chips;
+  const max = isRebuyMode ? 999 : state.players[bettingOrder[bettingPlayerIndex]].chips;
   currentWager = clamp(currentWager + delta, 1, max);
   document.getElementById('wager-display').textContent = currentWager;
 }
@@ -881,13 +883,13 @@ function adjustWager(delta) {
 function confirmBet() {
   if (isRebuyMode) { confirmRebuy(); return; }
   if (!selectedDogId) { alert('Wähle erst eine Bulldogge!'); return; }
-  state.bets.push({ playerIndex: bettingPlayerIndex, dogName: selectedDogId, wager: currentWager });
+  state.bets.push({ playerIndex: bettingOrder[bettingPlayerIndex], dogName: selectedDogId, wager: currentWager });
   bettingPlayerIndex++;
   if (bettingPlayerIndex >= state.players.length) {
     transition(PHASES.RACING);
   } else {
     selectedDogId = null;
-    showCurtain(bettingPlayerIndex);
+    showCurtain(bettingOrder[bettingPlayerIndex]);
   }
 }
 
