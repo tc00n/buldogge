@@ -488,6 +488,98 @@ input:focus-visible, select:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 1px;
 }
+
+/* ─── DESKTOP (≥1024px wide, ≥640px tall) ─── */
+@media (min-width: 1024px) and (min-height: 640px) {
+
+  .screen { min-height: 100vh; justify-content: center; padding: 32px 40px; }
+
+  /* ── Setup ── */
+  #screen-setup .card {
+    max-width: 1080px;
+    width: 100%;
+    padding: 56px 72px;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 0 72px;
+    align-items: start;
+  }
+  #screen-setup .card > .title-wrap {
+    grid-column: 1;
+    grid-row: 1 / 10;
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  #screen-setup .card > .title-wrap h1 { font-size: 2.8rem; }
+  #screen-setup .card > .title-wrap .gwg-logo { width: 72px !important; height: 72px !important; margin-bottom: 14px !important; }
+  #screen-setup .card > .players-header { grid-column: 2; }
+  #screen-setup .card > #player-list    { grid-column: 2; max-height: 320px; overflow-y: auto; }
+  #screen-setup .card > .config-row     { grid-column: 2; }
+  #screen-setup .card > .field-group    { grid-column: 2; }
+  #screen-setup .card > #start-game-btn { grid-column: 2; }
+
+  /* ── Betting ── */
+  #screen-betting .card {
+    max-width: 1080px;
+    width: 100%;
+    padding: 40px 56px;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 0 52px;
+    align-items: start;
+    overflow: visible;
+  }
+  #screen-betting .card > .curtain { grid-column: 1 / -1; }
+  #screen-betting .card > .betting-header { grid-column: 1; margin-bottom: 0; }
+  #screen-betting .card > .section-label  { grid-column: 2; }
+  #screen-betting .card > #rentnerin-selector {
+    grid-column: 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 0;
+  }
+  .rentnerin-btn { flex: none; }
+  #screen-betting .card > .wager-section  { grid-column: 1; margin-bottom: 0; }
+  #screen-betting .card > #confirm-bet-btn { grid-column: 1; }
+  #screen-betting .card > .progress-dots  { grid-column: 1 / -1; }
+
+  /* ── Race ── */
+  #screen-racing {
+    padding: 12px 0 0;
+    min-height: 100vh;
+    justify-content: flex-start;
+  }
+  .race-header { max-width: none; padding: 0 28px 8px; }
+  #race-canvas  { max-width: none; }
+  .event-log    { max-width: none; padding: 6px 28px 2px; }
+  .bet-ticker   { max-width: none; padding: 8px 28px 0; flex-wrap: nowrap; overflow-x: auto; }
+
+  /* ── Results ── */
+  #screen-results .card {
+    max-width: 760px;
+    padding: 48px 64px;
+  }
+  .podium-block.p1 { height: 90px; width: 96px; }
+  .podium-block.p2 { height: 64px; width: 86px; }
+  .podium-block.p3 { height: 46px; width: 76px; }
+  .result-row { padding: 14px 18px; }
+  .result-player { font-size: 1.05rem; }
+
+  /* ── Leaderboard ── */
+  #screen-leaderboard .card {
+    max-width: 660px;
+    padding: 48px 64px;
+  }
+  #screen-leaderboard .card h2 { font-size: 1.8rem; margin-bottom: 24px; }
+  .lb-row { padding: 14px 20px; }
+  .lb-rank { font-size: 1.5rem; width: 38px; }
+  .lb-name { font-size: 1.05rem; }
+  .lb-chips { font-size: 1.05rem; }
+}
 </style>
 </head>
 <body>
@@ -1023,18 +1115,32 @@ const FINISH_VX    = 2100;
 function setupCanvas() {
   dpr = window.devicePixelRatio || 1;
   const isLandscape = window.innerWidth > window.innerHeight;
-  const isPhone  = isLandscape && window.innerHeight <= 430;
-  const isTablet = isLandscape && window.innerHeight <= 600;
-  LANE_H   = isPhone ? 40 : isTablet ? 52 : 90;
+  const isPhone    = isLandscape && window.innerHeight <= 430;
+  const isTablet   = isLandscape && window.innerHeight <= 600;
+  const isDesktop  = window.innerWidth >= 1024 && window.innerHeight >= 640 && !isPhone && !isTablet;
   HEADER_H = isPhone ? 24 : 40;
-  const pad = isPhone ? 4 : 16;
-  const cssW = Math.min(820, window.innerWidth - pad);
-  const cssH = HEADER_H + state.numRentnerinnen * LANE_H + (isPhone ? 6 : 20);
+
+  let cssW, cssH, pad;
+  if (isDesktop) {
+    // Fill full viewport: deduce lane height from available vertical space
+    // ~12px top padding + ~60px race-header + ~40px event-log + ~56px bet-ticker = ~168px consumed
+    const nonCanvasH = 168;
+    const laneCount = state.numRentnerinnen;
+    LANE_H = Math.max(100, Math.min(160, Math.floor((window.innerHeight - nonCanvasH - HEADER_H - 20) / laneCount)));
+    cssW = window.innerWidth;
+    pad  = 0;
+  } else {
+    LANE_H = isPhone ? 40 : isTablet ? 52 : 90;
+    pad  = isPhone ? 4 : 16;
+    cssW = Math.min(820, window.innerWidth - pad);
+  }
+  cssH = HEADER_H + state.numRentnerinnen * LANE_H + (isPhone ? 6 : 20);
+
   canvas.style.width  = cssW + 'px';
   canvas.style.height = cssH + 'px';
   canvas.width  = cssW * dpr;
   canvas.height = cssH * dpr;
-  ctx.setTransform(1, 0, 0, 1, 0, 0); // reset before scaling to avoid stacking on resize
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.scale(dpr, dpr);
   return { w: cssW, h: cssH };
 }
