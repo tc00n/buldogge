@@ -504,19 +504,19 @@ input:focus-visible, select:focus-visible {
   outline-offset: 1px;
 }
 
-/* ─── DESKTOP (≥1024px wide, ≥640px tall) ─── */
-@media (min-width: 1024px) and (min-height: 640px) {
+/* ─── DESKTOP (≥1024px breit) ─── */
+@media (min-width: 1024px) {
 
-  .screen { min-height: 100vh; justify-content: center; padding: 28px 32px; }
+  .screen { min-height: 100vh; justify-content: center; padding: 20px 32px; }
 
   /* ── Setup ── */
   #screen-setup .card {
-    max-width: 1100px;
+    max-width: 880px;
     width: 100%;
-    padding: 40px 56px;
+    padding: 28px 40px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    column-gap: 56px;
+    column-gap: 48px;
     align-items: start;
   }
   /* Logo + Titel: zentriert über beiden Spalten */
@@ -524,18 +524,18 @@ input:focus-visible, select:focus-visible {
     grid-column: 1 / -1;
     display: block;
     text-align: center;
-    margin-bottom: 28px;
+    margin-bottom: 20px;
   }
-  #screen-setup .card > .title-wrap h1 { font-size: 3rem; }
-  #screen-setup .card > .title-wrap .gwg-logo { width: 64px !important; height: 64px !important; margin-bottom: 10px !important; }
+  #screen-setup .card > .title-wrap h1 { font-size: 2.6rem; }
+  #screen-setup .card > .title-wrap .gwg-logo { width: 52px !important; height: 52px !important; margin-bottom: 8px !important; }
   /* Spielerliste: linke Spalte */
   #screen-setup .card > .players-header { grid-column: 1; }
-  #screen-setup .card > #player-list    { grid-column: 1; max-height: none; overflow-y: visible; }
+  #screen-setup .card > #player-list    { grid-column: 1; max-height: 240px; overflow-y: auto; }
   /* Konfiguration: rechte Spalte */
   #screen-setup .card > .config-row     { grid-column: 2; margin-top: 0 !important; }
   #screen-setup .card > .field-group    { grid-column: 2; }
   /* Start-Button: volle Breite unten */
-  #screen-setup .card > #start-game-btn { grid-column: 1 / -1; margin-top: 20px; }
+  #screen-setup .card > #start-game-btn { grid-column: 1 / -1; margin-top: 16px; }
 
   /* ── Betting ── */
   #screen-betting .card {
@@ -1141,7 +1141,7 @@ function setupCanvas() {
   const isLandscape = window.innerWidth > window.innerHeight;
   const isPhone    = isLandscape && window.innerHeight <= 430;
   const isTablet   = isLandscape && window.innerHeight <= 600;
-  const isDesktop  = window.innerWidth >= 1024 && window.innerHeight >= 640 && !isPhone && !isTablet;
+  const isDesktop  = window.innerWidth >= 1024 && !isPhone && !isTablet;
   HEADER_H = isPhone ? 24 : 40;
 
   let cssW, cssH, pad;
