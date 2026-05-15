@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-<title>Frenchie Races 🐾</title>
+<title>Rollator Royale 🦽</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Rubik:wght@400;500;600;700;900&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #080f08;
@@ -23,30 +26,41 @@
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Rubik', system-ui, sans-serif;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 15% 15%, rgba(74,158,64,0.07) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 85%, rgba(255,215,0,0.04) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
 
-.screen { display: none; flex-direction: column; align-items: center; width: 100%; padding: 16px; }
+.screen { display: none; flex-direction: column; align-items: center; width: 100%; padding: 16px; position: relative; z-index: 1; }
 .screen.active { display: flex; }
 
 /* ─── CARDS ─── */
 .card {
-  background: var(--card);
-  border: 1px solid #162d14;
+  background: linear-gradient(145deg, #122e10 0%, #0d1f0c 100%);
+  border: 1px solid #1a3518;
   border-radius: var(--radius);
   padding: 24px;
   width: 100%;
   max-width: 480px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.03);
 }
 
 /* ─── TYPOGRAPHY ─── */
-h1 { font-size: 2.4rem; font-weight: 900; text-align: center; letter-spacing: -1px; }
-h1 span { color: var(--accent); }
-h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 12px; }
+h1 { font-family: 'Russo One', sans-serif; font-size: 2.4rem; font-weight: 400; text-align: center; letter-spacing: -1px; }
+h1 span { color: var(--accent); text-shadow: 0 0 28px rgba(74,158,64,0.45); }
+h2 { font-family: 'Russo One', sans-serif; font-size: 1.4rem; font-weight: 400; margin-bottom: 12px; }
 h3 { font-size: 1.1rem; font-weight: 600; }
 
 /* ─── BUTTONS ─── */
@@ -59,9 +73,10 @@ button {
   padding: 14px 20px;
   min-height: 48px;
   touch-action: manipulation;
-  transition: transform 0.08s, opacity 0.08s;
+  transition: transform 0.08s, opacity 0.08s, background 0.15s, box-shadow 0.15s;
 }
 button:active { transform: scale(0.96); }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 .btn-primary {
   background: var(--accent);
@@ -69,6 +84,12 @@ button:active { transform: scale(0.96); }
   width: 100%;
   font-size: 1.1rem;
   margin-top: 16px;
+  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+}
+.btn-primary:hover:not(:active) {
+  background: #5ab850;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(74,158,64,0.4);
 }
 .btn-secondary {
   background: var(--surface);
@@ -76,7 +97,9 @@ button:active { transform: scale(0.96); }
   border: 1px solid #1e3d1a;
   width: 100%;
   margin-top: 8px;
+  transition: border-color 0.15s, background 0.15s;
 }
+.btn-secondary:hover:not(:active) { border-color: var(--accent); }
 .btn-small {
   background: var(--surface);
   color: var(--muted);
@@ -170,34 +193,45 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 
 .section-label { font-size: 0.8rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
 
-#dog-selector { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+#rentnerin-selector { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
 
-.dog-btn {
+.rentnerin-btn .rentnerin-swatch { width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0; }
+.rentnerin-btn-info { display: flex; flex-direction: column; gap: 2px; }
+.rentnerin-btn-name { font-weight: 700; font-size: 0.95rem; }
+.rentnerin-btn-tier { font-size: 0.7rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.03em; }
+.rentnerin-btn-hint { font-size: 0.72rem; color: var(--muted); font-style: italic; }
+.rentnerin-btn-odds { font-size: 0.75rem; color: var(--muted); }
+.rentnerin-btn-odds strong { color: var(--gold); }
+.rentnerin-btn {
   flex: 1 1 100%;
-  min-width: 0;
   background: var(--surface);
   border: 2px solid #1e3d1a;
   border-radius: 10px;
-  padding: 10px 10px;
+  padding: 10px;
   text-align: left;
-  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-size: 0.9rem;
-  display: flex; align-items: center; gap: 8px;
-  transition: border-color 0.15s, background 0.15s;
+  transition: border-color 0.15s, background 0.15s, transform 0.12s, box-shadow 0.15s;
 }
-.dog-btn .dog-swatch { width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0; }
-.dog-btn-info { display: flex; flex-direction: column; gap: 2px; }
-.dog-btn-name { font-weight: 700; font-size: 0.95rem; }
-.dog-btn-odds { font-size: 0.75rem; color: var(--muted); }
-.dog-btn-odds strong { color: var(--gold); }
-.dog-btn.selected { border-color: var(--accent); background: rgba(74,158,64,0.15); }
+.rentnerin-btn:hover:not(.selected) {
+  border-color: #2d6b28;
+  transform: translateX(2px);
+}
+.rentnerin-btn.selected {
+  border-color: var(--accent);
+  background: rgba(74,158,64,0.12);
+  transform: translateX(5px);
+  box-shadow: 0 0 0 3px rgba(74,158,64,0.18), inset 0 0 16px rgba(74,158,64,0.04);
+}
 
 .wager-section { margin-bottom: 16px; }
 .wager-controls { display: flex; align-items: center; gap: 8px; }
 .wager-controls button { background: var(--surface); border: 1px solid #1e3d1a; border-radius: 8px; color: var(--text); font-size: 1rem; font-weight: 700; padding: 10px 14px; min-height: 44px; flex-shrink: 0; }
 .wager-display { flex: 1; text-align: center; font-size: 1.8rem; font-weight: 900; color: var(--gold); }
 
-.progress-dots { display: flex; gap: 6px; justify-content: center; margin-top: 16px; }
+.progress-dots { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 16px; }
 .progress-dot { width: 8px; height: 8px; border-radius: 50%; background: #1e3d1a; transition: background 0.2s; }
 .progress-dot.done { background: var(--green); }
 .progress-dot.active { background: var(--accent); }
@@ -208,6 +242,17 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 .race-title { font-size: 1.2rem; font-weight: 700; }
 
 #race-canvas { width: 100%; max-width: 820px; border-radius: 12px; display: block; }
+@keyframes eventSlideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes statusPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(74,158,64,0); }
+  50%       { box-shadow: 0 0 0 6px rgba(74,158,64,0.12); }
+}
+.event-log { width: 100%; max-width: 820px; min-height: 28px; padding: 6px 4px 2px; font-size: 0.85rem; font-weight: 600; color: var(--gold); text-align: center; }
+.event-log.active { animation: eventSlideIn 0.22s ease-out; }
+.round-badge.racing { animation: statusPulse 2s ease-in-out infinite; }
 
 .bet-ticker { width: 100%; max-width: 820px; display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 4px 0; }
 .bet-pill {
@@ -229,7 +274,7 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 .podium-block.p1 { height: 70px; background: var(--gold); }
 .podium-block.p2 { height: 50px; background: #c0c0c0; }
 .podium-block.p3 { height: 36px; background: #cd7f32; }
-.podium-name { font-size: 0.8rem; font-weight: 700; text-align: center; max-width: 80px; }
+.podium-name { font-size: 0.8rem; font-weight: 700; text-align: center; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .results-table { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
 .result-row {
@@ -262,15 +307,15 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
   border-radius: 10px;
   padding: 12px 16px;
 }
-.lb-row.first-place { border-color: var(--gold); background: rgba(255,215,0,0.08); }
+.lb-row.first-place { border-color: var(--gold); background: rgba(255,215,0,0.08); box-shadow: 0 0 0 1px rgba(255,215,0,0.2), 0 2px 12px rgba(255,215,0,0.08); }
 .lb-row.last-place { border-color: var(--neg); }
 .lb-rank { font-size: 1.3rem; font-weight: 900; width: 32px; text-align: center; flex-shrink: 0; }
-.lb-name { flex: 1; font-weight: 700; }
+.lb-name { flex: 1; font-weight: 700; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lb-chips { font-weight: 700; color: var(--gold); }
 
 .shame-box {
-  background: rgba(74,158,64,0.08);
-  border: 1px solid #1e3d1a;
+  background: rgba(255,215,0,0.05);
+  border: 1px solid rgba(255,215,0,0.2);
   border-radius: 10px;
   padding: 16px;
   text-align: center;
@@ -287,9 +332,9 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 .rebuy-hint   { font-size: 0.9rem; color: var(--muted); margin-bottom: 16px; }
 
 /* ─── MODE TOGGLE ─── */
-.mode-toggle { display: flex; border-radius: 8px; overflow: hidden; border: 1px solid #1e3d1a; margin-top: 2px; }
-.mode-toggle button { flex: 1; border-radius: 0; margin: 0; background: var(--surface); color: var(--muted); border: none; font-size: 0.88rem; padding: 11px 8px; min-height: 42px; font-weight: 600; transition: background 0.15s, color 0.15s; width: auto; }
-.mode-toggle button.active { background: var(--accent); color: #fff; }
+.mode-toggle { display: flex; border-radius: 8px; border: 1px solid #1e3d1a; margin-top: 2px; background: var(--bg); padding: 3px; gap: 3px; }
+.mode-toggle button { flex: 1; border-radius: 6px; margin: 0; background: transparent; color: var(--muted); border: none; font-size: 0.88rem; padding: 10px 8px; min-height: 40px; font-weight: 600; transition: background 0.18s, color 0.18s; width: auto; }
+.mode-toggle button.active { background: var(--accent); color: #fff; box-shadow: 0 2px 10px rgba(74,158,64,0.3); }
 
 /* ─── LANDSCAPE TABLET (≤600px tall) ─── */
 @media (orientation: landscape) and (max-height: 600px) {
@@ -322,8 +367,8 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 
   /* Betting: wider, dogs in 2 columns */
   #screen-betting .card { max-width: 780px; }
-  #dog-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
-  .dog-btn { flex: none; padding: 7px 8px; }
+  #rentnerin-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
+  .rentnerin-btn { flex: none; padding: 7px 8px; }
   .wager-section { margin-bottom: 8px; }
   .wager-display { font-size: 1.4rem; }
   .curtain { gap: 8px; padding: 20px; }
@@ -374,14 +419,14 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 
   /* Betting */
   #screen-betting .card { max-width: none; }
-  .dog-btn { padding: 5px 6px; }
-  .dog-btn-name { font-size: 0.8rem; }
-  .dog-btn-odds { font-size: 0.66rem; }
-  .dog-swatch { width: 13px !important; height: 13px !important; }
+  .rentnerin-btn { padding: 5px 6px; }
+  .rentnerin-btn-name { font-size: 0.8rem; }
+  .rentnerin-btn-odds { font-size: 0.66rem; }
+  .rentnerin-swatch { width: 13px !important; height: 13px !important; }
   .wager-display { font-size: 1.15rem; }
   .wager-controls button { padding: 5px 8px; min-height: 32px; }
   .betting-header { margin-bottom: 4px; }
-  #dog-selector { gap: 4px; margin-bottom: 5px; }
+  #rentnerin-selector { gap: 4px; margin-bottom: 5px; }
   .wager-section { margin-bottom: 4px; }
   .chip-badge { padding: 3px 8px; font-size: 0.76rem; }
   .round-badge { padding: 3px 8px; font-size: 0.72rem; }
@@ -421,6 +466,27 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
   .shame-box { padding: 7px; margin-bottom: 7px; }
   .shame-box h3 { font-size: 0.95rem; }
   .shame-box p { font-size: 0.78rem; }
+}
+
+/* ─── PORTRAIT MOBILE (≤480px) ─── */
+@media (max-width: 480px) and (orientation: portrait) {
+  .screen { padding: 10px 8px; }
+  .card { padding: 16px 14px; }
+  h1 { font-size: 1.9rem; }
+  #rentnerin-selector { flex-direction: column; }
+  .rentnerin-btn { flex: none; transform: none !important; }
+  .rentnerin-btn.selected { transform: translateX(3px) !important; }
+  .wager-controls button { min-height: 52px; padding: 12px 16px; font-size: 1.1rem; }
+  .wager-display { font-size: 2rem; }
+  .bet-ticker { flex-wrap: nowrap; overflow-x: auto; }
+  .results-table { gap: 6px; }
+  .leaderboard-list { gap: 6px; }
+}
+
+/* ─── FOCUS / ACCESSIBILITY ─── */
+input:focus-visible, select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
 }
 </style>
 </head>
@@ -466,8 +532,8 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
           <path class="gl-a" d="M233.32,32.36v47.5l-5.24-1.41v-18.93l-9.87-1.56.1,18.13-5.19-1.13-.29-43.45,5.22.18.11,17.52,9.91,1.21v-18.24l5.24.18Z"/>
         </g>
       </svg>
-      <h1>Rentner <span>Rennen</span></h1>
-      <p class="subtitle">Das Rentnerinnen-Trinkrennen</p>
+      <h1>Rollator <span>Royale</span></h1>
+      <p class="subtitle">Das Rollator-Trinkrennen</p>
     </div>
 
     <div class="players-header">
@@ -489,7 +555,7 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 
     <div class="field-group">
       <label>Anzahl Rentnerinnen</label>
-      <select id="num-dogs">
+      <select id="num-rentnerinnen">
         <option value="4">4 Rentnerinnen</option>
         <option value="5" selected>5 Rentnerinnen</option>
         <option value="6">6 Rentnerinnen</option>
@@ -527,7 +593,7 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
     </div>
 
     <div class="section-label">Wähle eine Rentnerin</div>
-    <div id="dog-selector"></div>
+    <div id="rentnerin-selector"></div>
 
     <div class="wager-section">
       <div class="section-label">Einsatz</div>
@@ -552,6 +618,7 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
     <div class="round-badge" id="race-status">Los gehts!</div>
   </div>
   <canvas id="race-canvas"></canvas>
+  <div class="event-log" id="event-log"></div>
   <div class="bet-ticker" id="bet-ticker"></div>
 </div>
 
@@ -576,6 +643,7 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
   </div>
 </div>
 
+<script src="names.js"></script>
 <script>
 // ═══════════════════════════════════════════════
 //  CONSTANTS
@@ -592,47 +660,40 @@ const RENTNER_TYPES = [
   { name: 'Käthe',    type: 'kaffee',   coat: '#e06090', bottom: '#b04070', skin: '#f0c898', hair: '#ececec', accent: '#c09060' },
 ];
 
-const FEMALE_NAMES = [
-  // Altdeutsch / Mittelalterlich
-  'Brunhilde','Waltraud','Hildegard','Elfriede','Hannelore','Edeltraud','Irmgard','Lieselotte','Sieglinde','Walpurga',
-  'Mechthild','Adelheid','Kunigunde','Hildegunde','Edelgard','Luitgard','Gundula','Hildgund','Hedwig','Ottilie',
-  'Thekla','Klothilde','Cäcilie','Ruperta','Eulalia','Friederike','Wilhelmine','Leopoldine','Christophine','Walburga',
-  // Klassisch (Kaiserzeit / Weimarer Republik)
-  'Gertrude','Anneliese','Roswitha','Hortensia','Hermine','Elfriede','Mathilde','Auguste','Wilhelmine','Emilie',
-  'Ernestine','Hulda','Minna','Frieda','Klara','Paula','Ida','Rosa','Berta','Hilde',
-  // Nachkriegszeit / Wirtschaftswunder (1945–1965)
-  'Helga','Renate','Inge','Brigitte','Ute','Ingrid','Jutta','Karin','Gerda','Christa',
-  'Ursula','Erika','Ilse','Herta','Monika','Sabine','Petra','Heike','Susanne','Angelika',
-  'Birgit','Beate','Elke','Gudrun','Doris','Gabi','Sigrid','Irmtraud','Elsbeth','Gertraud',
-  'Hildtraud','Heidrun','Gerlinde','Traude','Margot','Dorothea','Bärbel','Anni','Traudl','Gretl',
-  // 70er / 80er Jahrgänge
-  'Stefanie','Nicole','Claudia','Sandra','Simone','Andrea','Melanie','Anja','Sonja','Tanja',
-  'Antje','Corinna','Dagmar','Manuela','Michaela','Silvia','Vera','Martina','Katrin','Annette',
-  'Cornelia','Bettina','Daniela','Gabriele','Kerstin','Regina','Ulrike','Verena','Yvonne','Astrid',
-  // Modern (1990–heute)
-  'Julia','Laura','Sarah','Lena','Lea','Sophie','Hannah','Katharina','Lisa','Marie',
-  'Emma','Mia','Luisa','Alina','Jana','Lara','Nele','Johanna','Franziska','Maja',
-  'Paula','Charlotte','Amelie','Emilia','Leonie','Clara','Lina','Nina','Eva','Anna',
-  'Luise','Greta','Ida','Martha','Klara','Frieda','Hanna','Marta','Carla','Lotte',
-  // Französisch
-  'Camille','Chloé','Margot','Inès','Lucie','Manon','Léa','Juliette','Mathilde','Céline',
-  'Aurélie','Sandrine','Valérie','Nathalie','Isabelle','Delphine','Virginie','Stéphanie','Agnès','Brigitte',
-  // Spanisch / Lateinamerikanisch
-  'Carmen','Isabella','Valentina','Catalina','Gabriela','Esperanza','Pilar','Consuelo','Rosario','Fernanda',
-  'Paloma','Dolores','Mercedes','Milagros','Soledad','Encarnación','Inmaculada','Ascensión','Remedios','Lourdes',
-  // Englisch / Britisch
-  'Beatrice','Millicent','Prudence','Constance','Clementine','Harriet','Arabella','Cordelia','Lavinia','Octavia',
-  'Winifred','Meredith','Blanche','Cecily','Rowena','Imogen','Rosalind','Philippa','Edwina','Dorothea',
-  // Osteuropäisch (Polnisch / Tschechisch / Russisch)
-  'Natasha','Irina','Olga','Tatiana','Svetlana','Ludmila','Galina','Nadia','Vera','Zoya',
-  'Agnieszka','Małgorzata','Krystyna','Jadwiga','Wanda','Zofia','Władysława','Kazimiera','Bronisława','Celestyna',
+const STRENGTH_TIERS = [
+  { name: 'Top-Favoritin', strengthRange: [90, 100], oddsRange: [1.8, 2.4], speedMin: 0.94, speedMax: 1.00, chaosRange: [0, 20] },
+  { name: 'Mitfavoritin',  strengthRange: [80,  89], oddsRange: [2.5, 3.5], speedMin: 0.90, speedMax: 0.96, chaosRange: [0, 28] },
+  { name: 'Mittelfeld',    strengthRange: [70,  79], oddsRange: [4.0, 6.0], speedMin: 0.86, speedMax: 0.93, chaosRange: [0, 36] },
+  { name: 'Außenseiterin', strengthRange: [60,  69], oddsRange: [7.0, 10.0],speedMin: 0.82, speedMax: 0.89, chaosRange: [0, 42] },
+  { name: 'Chaos-Oma',     strengthRange: [50,  59], oddsRange:[12.0, 20.0],speedMin: 0.76, speedMax: 0.85, chaosRange: [0, 50] },
 ];
 
-const ODDS_MAP  = [0, 2.5, 2.0, 1.5];
-const LABEL_MAP = ['', 'Außenseiter ⭐', 'Mittel ⭐⭐', 'Favorit ⭐⭐⭐'];
+const FORM_HINTS = {
+  'Top-Favoritin': ['Topfit nach Wassergymnastik','Frisch vom Reha-Sport','Hat heute Rückenwind','Bestzeit letzte Woche','Trägt Siegermentalität','Rollator frisch geölt'],
+  'Mitfavoritin':  ['Heute mit neuen Einlagen','Gut ausgeschlafen','Hat ihren Rhythmus','Zuverlässig wie immer','Solide Tagesform','Kommt langsam in Fahrt'],
+  'Mittelfeld':    ['Stabil, aber kuchenanfällig','Tagesform unbekannt','Hat gestern schlecht geschlafen','Könnte überraschen','Launisch wie April','Mal so, mal so'],
+  'Außenseiterin': ['Hat Rücken, aber Willen','Alles oder nichts','Unberechenbare Tagesform','Lässt sich nicht abschreiben','Vielleicht ihr Tag','Fernsehabend wäre besser gewesen'],
+  'Chaos-Oma':     ['Eigentlich chancenlos, aber brandgefährlich','Niemand weiß, was sie macht','Verwechselt öfter die Richtung','Reine Glückssache','Hat schon mal gewonnen, angeblich','Bitte Helm tragen'],
+};
 
-const RACE_MIN_SPEEDS = [0, 0.85, 0.87, 0.89];
-const RACE_MAX_SPEEDS = [0, 0.93, 0.95, 0.97];
+const RACE_EVENTS = {
+  positive: [
+    { text: '🏃 {name} sieht einen freien Sitzplatz und sprintet!', boost: 1.6, duration: 60 },
+    { text: '💨 {name} bekommt Rückenwind vom Seniorentreff!',       boost: 1.4, duration: 80 },
+    { text: '😤 {name} aktiviert Rentner-Wut!',                      boost: 1.8, duration: 45 },
+    { text: '👟 {name} findet Rhythmus dank neuer Einlagen!',         boost: 1.35,duration: 90 },
+    { text: '☕ {name} riecht Kaffee am Ziel und beschleunigt!',      boost: 1.5, duration: 70 },
+    { text: '🦮 {name} sieht ihren Dackel und startet durch!',        boost: 1.7, duration: 50 },
+  ],
+  negative: [
+    { text: '😬 {name} verliert kurz ihr Gebiss!',                   boost: 0.5, duration: 50 },
+    { text: '🥧 {name} bleibt am Kuchenbuffet hängen!',              boost: 0.4, duration: 60 },
+    { text: '🗣️ {name} diskutiert mit dem Schiedsrichter!',           boost: 0.55,duration: 55 },
+    { text: '🐕 {name} muss kurz ihren Dackel beruhigen!',            boost: 0.45,duration: 65 },
+    { text: '💊 {name} verwechselt die Strecke mit dem Apothekenweg!',boost: 0.5, duration: 70 },
+    { text: '📞 {name} bekommt einen Anruf von der Krankenkasse!',    boost: 0.6, duration: 45 },
+  ],
+};
 
 // ═══════════════════════════════════════════════
 //  STATE
@@ -645,16 +706,18 @@ const state = {
   startingChips: 20,
   totalRounds: 6,
   currentRound: 0,
-  dogs: [],          // DOG_COLORS slice
+  rentnerinnen: [],  // aktive Rentnerinnen dieser Runde
   useOdds: true,
   bets: [],          // [{playerIndex, dogId, wager}]
   finishOrder: [],   // dogId sorted by finish time
-  raceDogs: [],      // physics objects
+  raceRentnerinnen: [], // Physik-Objekte während des Rennens
   animFrameId: null,
   frameCount: 0,
   legFrame: 0,
   confetti: [],
   raceFinished: false,
+  activeEvents: [],
+  nextEventFrame: 0,
 };
 
 // ═══════════════════════════════════════════════
@@ -729,12 +792,12 @@ function startGame() {
 
   state.startingChips = parseInt(document.getElementById('starting-chips').value) || 10;
   state.totalRounds   = parseInt(document.getElementById('num-rounds').value) || 6;
-  state.numDogs       = parseInt(document.getElementById('num-dogs').value) || 5;
+  state.numRentnerinnen       = parseInt(document.getElementById('num-rentnerinnen').value) || 5;
 
   state.players = names.map(n => ({ name: n, chips: state.startingChips }));
 
   state.useOdds = document.querySelector('#mode-toggle button.active').dataset.mode === 'odds';
-  state.dogs = RENTNER_TYPES.slice(0, state.numDogs).map(d => ({ ...d }));
+  state.rentnerinnen = RENTNER_TYPES.slice(0, state.numRentnerinnen).map(d => ({ ...d }));
   state.currentRound = 0;
 
   transition(PHASES.BETTING);
@@ -750,21 +813,57 @@ state.players = ['Tim','Philipp','Jo','Timmy','Fabian','Luca','Niki']
 
 let bettingPlayerIndex = 0;
 let bettingOrder = [];
-let selectedDogId = null;
+let selectedRentnerinId = null;
 let currentWager = 5;
 let isRebuyMode = false;
 
 function assignStrengthsForRound() {
-  state.dogs.forEach(dog => {
+  const TIER_SETS = {
+    4: [0, 1, 3, 4],
+    5: [0, 1, 2, 3, 4],
+    6: [0, 1, 2, 2, 3, 4],
+  };
+  const tierIndices = shuffle(TIER_SETS[state.numRentnerinnen] || [0,1,2,3,4]);
+
+  state.rentnerinnen.forEach((rentnerin, i) => {
     if (!state.useOdds) {
-      dog.strength  = 2;
-      dog.odds      = 2.0;
-      dog.oddsLabel = '';
+      const t = STRENGTH_TIERS[2]; // Mittelfeld
+      rentnerin.tier      = t;
+      rentnerin.strength  = 75;
+      rentnerin.baseOdds  = 2.0;
+      rentnerin.odds      = 2.0;
+      rentnerin.oddsLabel = '';
+      rentnerin.formHint  = '';
+      rentnerin.speedMin  = t.speedMin;
+      rentnerin.speedMax  = t.speedMax;
+      rentnerin.chaosRange = t.chaosRange;
     } else {
-      const s = Math.ceil(Math.random() * 3);
-      dog.strength  = s;
-      dog.odds      = ODDS_MAP[s];
-      dog.oddsLabel = LABEL_MAP[s];
+      const t = STRENGTH_TIERS[tierIndices[i]];
+      const [sLo, sHi] = t.strengthRange;
+      const [oLo, oHi] = t.oddsRange;
+      rentnerin.tier      = t;
+      rentnerin.strength  = sLo + Math.floor(Math.random() * (sHi - sLo + 1));
+      rentnerin.baseOdds  = +(oLo + Math.random() * (oHi - oLo)).toFixed(1);
+      rentnerin.odds      = rentnerin.baseOdds;
+      rentnerin.oddsLabel = t.name;
+      const hints         = FORM_HINTS[t.name];
+      rentnerin.formHint  = hints[Math.floor(Math.random() * hints.length)];
+      rentnerin.speedMin  = t.speedMin;
+      rentnerin.speedMax  = t.speedMax;
+      rentnerin.chaosRange = t.chaosRange;
+    }
+  });
+}
+
+function recalculateDynamicOdds() {
+  if (!state.useOdds) return;
+  state.rentnerinnen.forEach(rentnerin => {
+    const bettorCount = state.bets.filter(b => b.rentnerinName === rentnerin.name).length;
+    if (bettorCount <= 1) {
+      rentnerin.odds = rentnerin.baseOdds;
+    } else {
+      const factor = Math.pow(0.85, bettorCount - 1);
+      rentnerin.odds = Math.max(1.2, +(rentnerin.baseOdds * factor).toFixed(1));
     }
   });
 }
@@ -773,15 +872,15 @@ function initBetting() {
   state.bets = [];
   bettingPlayerIndex = 0;
   bettingOrder = shuffle(state.players.map((_, i) => i));
-  selectedDogId = null;
+  selectedRentnerinId = null;
   isRebuyMode = false;
   state.currentRound++;
 
   state.players.forEach(p => { p.rebuySips = 0; });
 
-  state.dogs = shuffle(state.dogs);
-  const namesThisRound = shuffle(FEMALE_NAMES).slice(0, state.numDogs);
-  state.dogs.forEach((dog, i) => { dog.name = namesThisRound[i]; });
+  state.rentnerinnen = shuffle(state.rentnerinnen);
+  const namesThisRound = shuffle(FEMALE_NAMES).slice(0, state.numRentnerinnen);
+  state.rentnerinnen.forEach((rentnerin, i) => { rentnerin.name = namesThisRound[i]; });
   assignStrengthsForRound();
 
   showCurtain(bettingOrder[bettingPlayerIndex]);
@@ -805,7 +904,7 @@ function showRebuyUI(playerIdx) {
   document.getElementById('betting-round-label').textContent = `Runde ${state.currentRound} / ${state.totalRounds}`;
   document.getElementById('betting-chips').textContent = '0';
 
-  const sel = document.getElementById('dog-selector');
+  const sel = document.getElementById('rentnerin-selector');
   sel.innerHTML = `
     <div style="padding:8px 0 4px;">
       <div class="rebuy-header">${player.name} ist Bankrott! 💸</div>
@@ -848,21 +947,23 @@ function renderBettingUI(playerIdx) {
   document.getElementById('betting-round-label').textContent = `Runde ${state.currentRound} / ${state.totalRounds}`;
   document.getElementById('betting-chips').textContent = player.chips;
 
-  // Dog buttons
-  const sel = document.getElementById('dog-selector');
+  // Rentnerin Buttons
+  const sel = document.getElementById('rentnerin-selector');
   sel.innerHTML = '';
-  selectedDogId = null;
-  state.dogs.forEach(dog => {
+  selectedRentnerinId = null;
+  state.rentnerinnen.forEach(rentnerin => {
     const btn = document.createElement('button');
-    btn.className = 'dog-btn';
-    btn.dataset.dogId = dog.name;
+    btn.className = 'rentnerin-btn';
+    btn.dataset.rentnerinId = rentnerin.name;
     btn.innerHTML = `
-      <span class="dog-swatch" style="background:${dog.coat}"></span>
-      <span class="dog-btn-info">
-        <span class="dog-btn-name">${dog.name}</span>
-        ${state.useOdds ? `<span class="dog-btn-odds">${dog.oddsLabel || ''} &nbsp; Quote: <strong>${dog.odds}x</strong></span>` : ''}
+      <span class="rentnerin-swatch" style="background:${rentnerin.coat}"></span>
+      <span class="rentnerin-btn-info">
+        <span class="rentnerin-btn-name">${rentnerin.name}</span>
+        ${state.useOdds ? `<span class="rentnerin-btn-tier">${rentnerin.oddsLabel}</span>` : ''}
+        ${state.useOdds && rentnerin.formHint ? `<span class="rentnerin-btn-hint">${rentnerin.formHint}</span>` : ''}
+        ${state.useOdds ? `<span class="rentnerin-btn-odds">Quote: <strong>${rentnerin.odds}x</strong></span>` : ''}
       </span>`;
-    btn.addEventListener('click', () => selectDog(dog.name, btn));
+    btn.addEventListener('click', () => selectRentnerin(rentnerin.name, btn));
     sel.appendChild(btn);
   });
 
@@ -880,10 +981,10 @@ function renderBettingUI(playerIdx) {
   });
 }
 
-function selectDog(dogName, btn) {
-  document.querySelectorAll('.dog-btn').forEach(b => b.classList.remove('selected'));
+function selectRentnerin(rentnerinName, btn) {
+  document.querySelectorAll('.rentnerin-btn').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
-  selectedDogId = dogName;
+  selectedRentnerinId = rentnerinName;
 }
 
 function adjustWager(delta) {
@@ -894,13 +995,14 @@ function adjustWager(delta) {
 
 function confirmBet() {
   if (isRebuyMode) { confirmRebuy(); return; }
-  if (!selectedDogId) { alert('Wähle erst eine Rentnerin!'); return; }
-  state.bets.push({ playerIndex: bettingOrder[bettingPlayerIndex], dogName: selectedDogId, wager: currentWager });
+  if (!selectedRentnerinId) { alert('Wähle erst eine Rentnerin!'); return; }
+  state.bets.push({ playerIndex: bettingOrder[bettingPlayerIndex], rentnerinName: selectedRentnerinId, wager: currentWager });
+  recalculateDynamicOdds();
   bettingPlayerIndex++;
   if (bettingPlayerIndex >= state.players.length) {
     transition(PHASES.RACING);
   } else {
-    selectedDogId = null;
+    selectedRentnerinId = null;
     showCurtain(bettingOrder[bettingPlayerIndex]);
   }
 }
@@ -927,7 +1029,7 @@ function setupCanvas() {
   HEADER_H = isPhone ? 24 : 40;
   const pad = isPhone ? 4 : 16;
   const cssW = Math.min(820, window.innerWidth - pad);
-  const cssH = HEADER_H + state.numDogs * LANE_H + (isPhone ? 6 : 20);
+  const cssH = HEADER_H + state.numRentnerinnen * LANE_H + (isPhone ? 6 : 20);
   canvas.style.width  = cssW + 'px';
   canvas.style.height = cssH + 'px';
   canvas.width  = cssW * dpr;
@@ -1170,7 +1272,7 @@ function drawTrack(camX, w, h) {
   ctx.fillStyle = '#0f2a0f';
   ctx.fillRect(0, 0, w, HEADER_H);
 
-  for (let i = 0; i < state.numDogs; i++) {
+  for (let i = 0; i < state.numRentnerinnen; i++) {
     const laneY = HEADER_H + i * LANE_H;
 
     // alternating lane tint
@@ -1191,10 +1293,10 @@ function drawTrack(camX, w, h) {
     ctx.beginPath(); ctx.moveTo(0, laneY + LANE_H/2); ctx.lineTo(w, laneY + LANE_H/2); ctx.stroke();
     ctx.setLineDash([]);
 
-    // dog name label (fixed to left edge)
+    // Rentnerin-Name (linker Rand)
     ctx.fillStyle = '#ffffff';
     ctx.font = 'bold 11px system-ui'; ctx.textAlign = 'left';
-    ctx.fillText(state.dogs[i].name, 6, laneY + 14);
+    ctx.fillText(state.rentnerinnen[i].name, 6, laneY + 14);
   }
 
   // Distance markers every 300 virtual px
@@ -1234,7 +1336,7 @@ function drawTrack(camX, w, h) {
   }
 
   // Distance to finish (header right)
-  const leadX = state.raceDogs.length ? Math.max(...state.raceDogs.map(d => d.x)) : START_X;
+  const leadX = state.raceRentnerinnen.length ? Math.max(...state.raceRentnerinnen.map(d => d.x)) : START_X;
   const mToFinish = Math.max(0, Math.round((FINISH_VX - leadX) / 10));
   ctx.fillStyle = 'rgba(255,255,255,0.7)';
   ctx.font = 'bold 12px system-ui'; ctx.textAlign = 'right';
@@ -1245,17 +1347,20 @@ function drawTrack(camX, w, h) {
 //  RACE PHYSICS
 // ═══════════════════════════════════════════════
 
-function initRaceDogs() {
-  return state.dogs.map((dog, i) => {
-    const s = dog.strength || 3;
-    const base = RACE_MIN_SPEEDS[s] + Math.random() * (RACE_MAX_SPEEDS[s] - RACE_MIN_SPEEDS[s]);
+function initRaceRentnerinnen() {
+  return state.rentnerinnen.map((rentnerin, i) => {
+    const sMin = rentnerin.speedMin || 0.87;
+    const sMax = rentnerin.speedMax || 0.95;
+    const base = sMin + Math.random() * (sMax - sMin);
     return {
-      id: i, name: dog.name,
+      id: i, name: rentnerin.name,
       x: START_X,
       speed: 0,
-      strength: s,
+      speedMin: sMin, speedMax: sMax,
+      chaosRange: rentnerin.chaosRange || [0, 20],
       baseSpeed: base,
       targetSpeed: base,
+      eventBoost: 1.0,
       driftTimer: Math.floor(Math.random() * 80),
       stamina: 0.7 + Math.random() * 0.3,
       burstFrames: 0,
@@ -1269,57 +1374,89 @@ function initRaceDogs() {
   });
 }
 
-function updateRaceDogs() {
+function updateRaceRentnerinnen() {
   let allDone = true;
-  const leadX = Math.max(...state.raceDogs.map(d => d.x));
+  const leadX = Math.max(...state.raceRentnerinnen.map(d => d.x));
 
-  for (const dog of state.raceDogs) {
-    if (dog.finished) continue;
+  for (const rt of state.raceRentnerinnen) {
+    if (rt.finished) continue;
     allDone = false;
 
-    dog.stamina = Math.max(0.5, dog.stamina - 0.0003);
+    rt.stamina = Math.max(0.5, rt.stamina - 0.0003);
 
     // Drifting base speed — target rerolls every 80–220 frames
-    const s = dog.strength;
-    if (dog.driftTimer <= 0) {
-      dog.targetSpeed = RACE_MIN_SPEEDS[s] + Math.random() * (RACE_MAX_SPEEDS[s] - RACE_MIN_SPEEDS[s]);
-      dog.driftTimer  = 80 + Math.floor(Math.random() * 140);
+    if (rt.driftTimer <= 0) {
+      rt.targetSpeed = rt.speedMin + Math.random() * (rt.speedMax - rt.speedMin);
+      rt.driftTimer  = 80 + Math.floor(Math.random() * 140);
     } else {
-      dog.driftTimer--;
+      rt.driftTimer--;
     }
-    dog.baseSpeed += (dog.targetSpeed - dog.baseSpeed) * 0.015;
+    rt.baseSpeed += (rt.targetSpeed - rt.baseSpeed) * 0.015;
 
-    const nearFinish  = dog.x > FINISH_VX - 400;
+    const nearFinish  = rt.x > FINISH_VX - 400;
     const burstChance = nearFinish ? 0.10 : 0.05;
     const burstLen    = nearFinish ? 35 + Math.floor(Math.random() * 50) : 25 + Math.floor(Math.random() * 45);
 
-    if (dog.burstFrames > 0) {
-      dog.burstFrames--;
-    } else if (dog.burstCooldown > 0) {
-      dog.burstCooldown--;
+    if (rt.burstFrames > 0) {
+      rt.burstFrames--;
+    } else if (rt.burstCooldown > 0) {
+      rt.burstCooldown--;
     } else if (Math.random() < burstChance) {
-      dog.burstFrames   = burstLen;
-      dog.burstCooldown = 50 + Math.floor(Math.random() * 100);
+      rt.burstFrames   = burstLen;
+      rt.burstCooldown = 50 + Math.floor(Math.random() * 100);
     }
 
-    const burst = dog.burstFrames > 0 ? 1.45 + Math.random() * 0.3 : 1.0;
-    const stamFactor = 0.75 + dog.stamina * 0.25;
-    const noise = (Math.random() - 0.5) * 0.55;
-    const gap = leadX - dog.x;
+    const burst = rt.burstFrames > 0 ? 1.45 + Math.random() * 0.3 : 1.0;
+    const stamFactor = 0.75 + rt.stamina * 0.25;
+    const noiseAmp = (rt.chaosRange[1] / 100) * 0.4;
+    const noise = (Math.random() - 0.5) * 2 * noiseAmp;
+    const gap = leadX - rt.x;
     const catchUp = gap > 220 ? 1.40 : gap > 110 ? 1.20 : 1.0;
 
-    dog.speed = dog.baseSpeed * burst * stamFactor * catchUp + noise;
-    dog.speed = Math.max(0.4, dog.speed);
-    dog.x += dog.speed;
+    rt.speed = rt.baseSpeed * burst * stamFactor * catchUp * rt.eventBoost + noise;
+    rt.speed = Math.max(0.4, rt.speed);
+    rt.x += rt.speed;
 
-    if (dog.x >= dog.finishX) {
-      dog.x = dog.finishX;
-      dog.finished = true;
-      dog.finishTime = state.frameCount;
-      const finished = state.raceDogs.filter(d => d.finished);
-      dog.place = finished.length;
+    if (rt.x >= rt.finishX) {
+      rt.x = rt.finishX;
+      rt.finished = true;
+      rt.finishTime = state.frameCount;
+      const finished = state.raceRentnerinnen.filter(d => d.finished);
+      rt.place = finished.length;
     }
   }
+
+  // Reset event boosts
+  state.raceRentnerinnen.forEach(rd => { rd.eventBoost = 1.0; });
+
+  // Trigger new event if scheduled
+  if (state.frameCount >= state.nextEventFrame) {
+    const notFinished = state.raceRentnerinnen.filter(d => !d.finished);
+    if (notFinished.length > 0) {
+      const pool = Math.random() < 0.5 ? RACE_EVENTS.positive : RACE_EVENTS.negative;
+      const ev = pool[Math.floor(Math.random() * pool.length)];
+      const target = notFinished[Math.floor(Math.random() * notFinished.length)];
+      state.activeEvents.push({
+        dogIndex: target.id,
+        text: ev.text.replace('{name}', target.name),
+        boost: ev.boost,
+        framesLeft: ev.duration,
+      });
+    }
+    state.nextEventFrame = state.frameCount + 150 + Math.floor(Math.random() * 200);
+  }
+
+  // Apply and expire active events
+  state.activeEvents = state.activeEvents.filter(ev => {
+    ev.framesLeft--;
+    if (ev.framesLeft >= 0) {
+      const rd = state.raceRentnerinnen[ev.dogIndex];
+      if (rd) rd.eventBoost = ev.boost;
+      return true;
+    }
+    return false;
+  });
+
   return allDone;
 }
 
@@ -1361,25 +1498,28 @@ function drawConfetti(h) {
 function initRacing() {
   document.getElementById('race-round-label').textContent = `Runde ${state.currentRound} / ${state.totalRounds}`;
   document.getElementById('race-status').textContent = 'Los gehts!';
+  document.getElementById('race-status').classList.add('racing');
 
   // Bet ticker
   const ticker = document.getElementById('bet-ticker');
   ticker.innerHTML = '';
   state.bets.forEach(bet => {
-    const dog = state.dogs.find(d => d.name === bet.dogName);
+    const rentnerin = state.rentnerinnen.find(d => d.name === bet.rentnerinName);
     const player = state.players[bet.playerIndex];
     const pill = document.createElement('div');
     pill.className = 'bet-pill';
-    pill.innerHTML = `<span class="swatch" style="background:${dog.coat}"></span><strong>${player.name}</strong>&nbsp;→ ${dog.name}${state.useOdds ? ` <span style="color:var(--gold)">${dog.odds}x</span>` : ''} (${bet.wager} Chips)`;
+    pill.innerHTML = `<span class="swatch" style="background:${rentnerin.coat}"></span><strong>${player.name}</strong>&nbsp;→ ${rentnerin.name}${state.useOdds ? ` <span style="color:var(--gold)">${rentnerin.odds}x</span>` : ''} (${bet.wager} Chips)`;
     ticker.appendChild(pill);
   });
 
   const { w, h } = setupCanvas();
-  state.raceDogs = initRaceDogs();
+  state.raceRentnerinnen = initRaceRentnerinnen();
   state.frameCount = 0;
   state.legFrame = 0;
   state.raceFinished = false;
   state.confetti = [];
+  state.activeEvents = [];
+  state.nextEventFrame = 120 + Math.floor(Math.random() * 180);
 
   if (state.animFrameId) cancelAnimationFrame(state.animFrameId);
   state.animFrameId = requestAnimationFrame(raceLoop);
@@ -1393,8 +1533,8 @@ function raceLoop() {
   const cssH = parseInt(canvas.style.height);
 
   // Camera follows the leader
-  const leadX = state.raceDogs.length
-    ? Math.max(...state.raceDogs.map(d => d.x))
+  const leadX = state.raceRentnerinnen.length
+    ? Math.max(...state.raceRentnerinnen.map(d => d.x))
     : START_X;
   const camX = clamp(leadX - cssW * 0.35, 0, TRACK_LENGTH - cssW);
 
@@ -1403,26 +1543,39 @@ function raceLoop() {
   drawTrack(camX, cssW, cssH);
 
   // draw dogs (only those visible in viewport)
-  state.raceDogs.forEach((dog, i) => {
-    const sx = dog.x - camX;
+  state.raceRentnerinnen.forEach((rt, i) => {
+    const sx = rt.x - camX;
     if (sx > -80 && sx < cssW + 80) {
       const laneY = HEADER_H + i * LANE_H + LANE_H / 2 + 8;
-      const wobble = Math.sin(state.frameCount * 0.15 + dog.wobblePhase) * 3;
-      drawRentnerin(sx, laneY + wobble, state.dogs[i], dog.finished ? 1 : state.legFrame);
+      const wobble = Math.sin(state.frameCount * 0.15 + rt.wobblePhase) * 3;
+      drawRentnerin(sx, laneY + wobble, state.rentnerinnen[i], rt.finished ? 1 : state.legFrame);
     }
   });
 
   if (!state.raceFinished) {
-    const done = updateRaceDogs();
+    const done = updateRaceRentnerinnen();
     if (done) {
       state.raceFinished = true;
-      state.finishOrder = [...state.raceDogs].sort((a,b) => a.finishTime - b.finishTime).map(d => d.name);
-      document.getElementById('race-status').textContent = 'Ziel!';
+      state.finishOrder = [...state.raceRentnerinnen].sort((a,b) => a.finishTime - b.finishTime).map(d => d.name);
+      const statusEl = document.getElementById('race-status');
+      statusEl.textContent = 'Ziel!';
+      statusEl.classList.remove('racing');
+      document.getElementById('event-log').textContent = '';
       spawnConfetti(cssW);
       setTimeout(() => {
         cancelAnimationFrame(state.animFrameId);
         transition(PHASES.RESULTS);
       }, 2500);
+    } else {
+      const latest = state.activeEvents[state.activeEvents.length - 1];
+      const eventLog = document.getElementById('event-log');
+      const newText = latest ? latest.text : '';
+      if (newText !== eventLog.textContent) {
+        eventLog.classList.remove('active');
+        void eventLog.offsetWidth;
+        eventLog.textContent = newText;
+        if (newText) eventLog.classList.add('active');
+      }
     }
   }
 
@@ -1440,18 +1593,18 @@ function raceLoop() {
 function calculateResults() {
   const results = state.players.map((p, i) => ({
     playerIndex: i, name: p.name,
-    chipsChange: 0, sips: 0, won: false, dogName: '', wager: 0,
+    chipsChange: 0, sips: 0, won: false, rentnerinName: '', wager: 0,
     rebuySips: p.rebuySips || 0,
   }));
 
   state.bets.forEach(bet => {
     const r = results[bet.playerIndex];
-    r.dogName = bet.dogName;
+    r.rentnerinName = bet.rentnerinName;
     r.wager = bet.wager;
-    const dog = state.dogs.find(d => d.name === bet.dogName);
-    const odds = dog ? dog.odds : 2.0;
+    const rentnerin = state.rentnerinnen.find(d => d.name === bet.rentnerinName);
+    const odds = rentnerin ? rentnerin.odds : 2.0;
     r.odds = odds;
-    const place = state.finishOrder.indexOf(bet.dogName) + 1;
+    const place = state.finishOrder.indexOf(bet.rentnerinName) + 1;
     if (place === 1) {
       r.chipsChange += Math.round(bet.wager * (odds - 1));
       r.won = true;
@@ -1486,13 +1639,13 @@ function initResults() {
   const heights = ['p2','p1','p3'];
   const labels = ['2.','1.','3.'];
   podiumOrder.forEach((finishIdx, colIdx) => {
-    const dogName = state.finishOrder[finishIdx];
-    if (!dogName) return;
-    const dog = state.dogs.find(d => d.name === dogName);
+    const rentnerinName = state.finishOrder[finishIdx];
+    if (!rentnerinName) return;
+    const rentnerin = state.rentnerinnen.find(d => d.name === rentnerinName);
     const col = document.createElement('div');
     col.className = 'podium-col';
     col.innerHTML = `
-      <div style="font-size:0.8rem;color:var(--muted);font-weight:700;">${dogName}</div>
+      <div style="font-size:0.8rem;color:var(--muted);font-weight:700;">${rentnerinName}</div>
       <div class="podium-block ${heights[colIdx]}">${labels[colIdx]}</div>`;
     podium.appendChild(col);
   });
@@ -1508,7 +1661,7 @@ function initResults() {
     row.innerHTML = `
       <div class="result-left">
         <div class="result-player">${r.name}</div>
-        <div class="result-bet-info">Auf: ${r.dogName || '—'} (${r.odds ? r.odds + 'x' : '—'}) · ${r.wager} Chips gesetzt</div>
+        <div class="result-bet-info">Auf: ${r.rentnerinName || '—'} (${r.odds ? r.odds + 'x' : '—'}) · ${r.wager} Chips gesetzt</div>
         ${r.rebuySips ? `<div style="font-size:0.8rem;color:var(--neg);">💸 Re-Buy: ${r.rebuySips} Schlucke getrunken, ${r.rebuySips} Chips erkauft</div>` : ''}
       </div>
       <div class="result-right">
